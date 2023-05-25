@@ -6,17 +6,17 @@ import axios from "axios";
 import { BASE_URL, TOKEN_NAME } from "./constants/url";
 
 export default function App() {
-  const [playlists, setPlaylists] = useState([]);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const token = window.localStorage.getItem(TOKEN_NAME);
 
     if (token) {
-      fetchPlaylists();
+      fetchPosts();
     }
   }, []);
 
-  const fetchPlaylists = async () => {
+  const fetchPosts = async () => {
     try {
       const token = window.localStorage.getItem(TOKEN_NAME);
 
@@ -26,9 +26,9 @@ export default function App() {
         }
       };
 
-      const response = await axios.get(BASE_URL + "/playlists", config);
+      const response = await axios.get(BASE_URL + "/posts", config);
 
-      setPlaylists(response.data);
+      setPosts(response.data);
     } catch (error) {
       console.error(error?.response?.data);
       window.alert(error?.response?.data)
@@ -36,8 +36,8 @@ export default function App() {
   };
 
   const context = {
-    playlists,
-    fetchPlaylists
+    posts,
+    fetchPosts
   };
 
   return (

@@ -1,9 +1,9 @@
-import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { BASE_URL, TOKEN_NAME } from "../../constants/url";
-import { goToHomePage, goToSignupPage } from "../../routes/coordinator";
+import axios from "axios"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import styled from "styled-components"
+import { BASE_URL, TOKEN_NAME } from "../../constants/url"
+import { goToHomePage, goToSignupPage } from "../../routes/coordinator"
 import labeLogo from "../../assets/labeLogo.png"
 
 const Main = styled.main`
@@ -119,43 +119,47 @@ const SecondaryButton = styled.button`
 `;
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-
-  const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
   const [form, setForm] = useState({
     email: "",
     password: ""
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [errorLogin, setErrorLogin] = useState("Email ou senha inválidos")
+  const [errorMessage, setErrorMessage] = useState("Tente novamente")
   const changeForm = (event) => {
-    setForm({ ...form, [event.target.name]: event.target.value });
-  };
+    setForm({ ...form, [event.target.name]: event.target.value })
+  }
 
   const login = async (event) => {
-    event.preventDefault();
-
+    event.preventDefault()
     try {
-      setIsLoading(true);
+      
+      setIsLoading(true)
 
-      const body = {
-        email: form.email,
-        password: form.password
-      };
+      const response = await axios.post(`${BASE_URL}/users/login`, form)
 
-      const response = await axios.post(BASE_URL + "/users/login", body);
-      window.localStorage.setItem(TOKEN_NAME, response.data.token);
-
-      setIsLoading(false);
-      goToHomePage(navigate);
+      if (response.status === 200) {
+        const { token } = response.data
+        console.log(response, token)
+        localStorage.setItem("token", token)
+        setIsLoading(false)
+        goToHomePage(navigate)
+        // navigate(goToHomePage)
+      } else {
+        console.log(response)
+        setIsLoading(false)
+        setErrorLogin("Email ou senha inválidos")
+      }
     } catch (error) {
-      setIsLoading(false);
-      console.error(error?.response?.data);
-      window.alert(error?.response?.data);
+      setIsLoading(false)
+      console.error(error?.response?.data)
+      window.alert(error?.response?.data)
+      setErrorMessage("Tente novamente")
     }
-  };
+  }
+  
 
   return (
     <Main>
@@ -166,8 +170,9 @@ const LoginPage = () => {
 
         <Form onSubmit={login} autoComplete="off">
           <FormGroup>
-            <label>Email</label>
+            {/* <label>Email</label> */}
             <input
+              placeholder="Email"
               name="email"
               value={form.email}
               onChange={changeForm}
@@ -175,8 +180,9 @@ const LoginPage = () => {
           </FormGroup>
 
           <FormGroup>
-            <label>Senha</label>
+            {/* <label>Senha</label> */}
             <input
+              placeholder="Password"
               type={showPassword ? "text" : "password"}
               name="password"
               value={form.password}
@@ -187,7 +193,7 @@ const LoginPage = () => {
               <input
                 type="checkbox"
                 checked={showPassword}
-                onChange={() => setShowPassword}
+                onChange={() => setShowPassword(true)}
                   />
                   Mostrar Senha
                 </span>
@@ -207,23 +213,9 @@ const LoginPage = () => {
             </h2>
       
             <hr />
-      
-            <h3>Conta de teste</h3>
-            <p>astrodev@email.com</p>
-            <p>astrodev99</p>
-            <Button
-              onClick={() => {
-                setForm({
-                  email: "astrodev@email.com",
-                  password: "astrodev99"
-                });
-              }}
-            >
-              Autopreencher
-            </Button>
           </Section>
         </Main>
-      );
+      )
 }
-      export default LoginPage;
+      export default LoginPage
       

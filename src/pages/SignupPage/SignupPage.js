@@ -1,11 +1,11 @@
-import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { BASE_URL, TOKEN_NAME } from "../../constants/url";
-import { goToHomePage } from "../../routes/coordinator";
-import labeLogoMini from "../../assets/labeLogoMini.png";
-import { goToLoginPage } from "../../routes/coordinator";
+import axios from "axios"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import styled from "styled-components"
+import { BASE_URL, TOKEN_NAME } from "../../constants/url"
+import { goToHomePage } from "../../routes/coordinator"
+import labeLogoMini from "../../assets/labeLogoMini.png"
+import { goToLoginPage } from "../../routes/coordinator"
 
 
 const Main = styled.main`
@@ -101,59 +101,50 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-// Componente de criação de conta
-
 const SignupPage = () => {
-  const navigate = useNavigate();
-
-  const handleEntrar = () => {
-    goToLoginPage(navigate)
-  };
-  const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
   const [form, setForm] = useState({
     nickname: "",
     email: "",
     password: "",
     agreeEmails: false
-  });
+  })
 
   const changeForm = (event) => {
-    const { name, value, type, checked } = event.target;
-    const fieldValue = type === "checkbox" ? checked : value;
-    setForm({ ...form, [name]: fieldValue });
-  };
+    const { name, value, type, checked } = event.target
+    const fieldValue = type === "checkbox" ? checked : value
+    setForm({ ...form, [name]: fieldValue })
+  }
 
-  const createAccount = async (event) => {
-    event.preventDefault();
-  
+  const createAccount = async (event) => { 
+    event.preventDefault()
+
     try {
-      setIsLoading(true);
-  
-      const body = {
-        nickname: form.nickname,
-        email: form.email,
-        password: form.password,
-        agreeEmails: form.agreeEmails
-      };
-  
-      const response = await axios.post(BASE_URL + "/users/signup", body);
-      window.localStorage.setItem(TOKEN_NAME, response.data.token);
-  
-      setIsLoading(false);
-      goToHomePage(navigate);
+      setIsLoading(true)
+
+      const response = await axios.post(`${BASE_URL}/users/signup`, form)
+      if (response.status === 200) {
+        const { token } = response.data
+        localStorage.setItem("token", token)
+        setIsLoading(false)
+        goToLoginPage(navigate)
+      } else {
+        setIsLoading(false)
+        console.log("Erro ao cadastrar")
+      }
     } catch (error) {
-      setIsLoading(false);
-      console.error(error?.response?.data);
-      window.alert(error?.response?.data);
+      setIsLoading(false)
+      console.error(error?.result?.data)
+      window.alert(error?.result?.data)
     }
-  };
+  }
   
   return (
     <div>
       <Header>
       <LogoSmall src={labeLogoMini} alt="Logo" />
-      <ButtonEntrar onClick={handleEntrar}>Entrar</ButtonEntrar>
+      <ButtonEntrar onClick={() => goToLoginPage(navigate)}>Entrar</ButtonEntrar>
     </Header>
     
     <Main>
@@ -215,6 +206,6 @@ const SignupPage = () => {
     </Main>
     </div>
     
-  );
+  )
 }
 export default SignupPage
