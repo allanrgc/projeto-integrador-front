@@ -1,3 +1,3 @@
-export const BASE_URL = "https://deploy-template-backend-mzjk.onrender.com";
+export const BASE_URL = "https://projeto-integrador-back-end-allan.onrender.com";
 
-export const TOKEN_NAME = "labefy-token"
+export const TOKEN_NAME = "labeddit-token"

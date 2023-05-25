@@ -1,8 +1,9 @@
-import { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { goToLoginPage } from "../../routes/coordinator";
-import labeLogoMini from "../../assets/labeLogoMini.png";
+import { useState, useEffect  } from "react"
+import styled from "styled-components"
+import { useNavigate } from "react-router-dom"
+import { goToLoginPage } from "../../routes/coordinator"
+import labeLogoMini from "../../assets/labeLogoMini.png"
+import postCRUD from "../../components/postCRUD"
 
 const Header = styled.header`
   background-color: #f2f2f2;
@@ -90,45 +91,89 @@ const Post = styled.div`
 `;
 
 
+
+
+
+
 const HomePage = () => {
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false)
+  const [posts, setPosts] = useState([])
+  const [content, setContent] = useState("")
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  const fetchPosts = async () => {
+    setIsLoading(true)
+    const headers = {
+      Authorization: headers
+    }
+
+    const response = await postCRUD.getPosts(headers)
+    if (response) {
+      setPosts(response)
+    }
+    setIsLoading(false)
+  }
+
+  const createNewPost = async () => {
+    setIsLoading(true)
+    const headers = {
+      Authorization: headers
+    }
+    const body = {
+      content: content
+    }
+
+    const response = await postCRUD.createPost(headers, body)
+    if (response) {
+      setContent("")
+      fetchPosts()
+    }
+    setIsLoading(false)
+  }
+
+  const likeDislikePost = async (postId, isLike) => {
+    setIsLoading(true)
+    const headers = {
+      Authorization: headers
+    }
+    const body = {
+      like: true
+    }
+
+    const response = await postCRUD.likeDislikePost(headers, body, postId)
+    if (response) {
+      fetchPosts()
+    }
+    setIsLoading(false)
+  }
 
   const handleLogout = () => {
-    goToLoginPage(navigate); // Redireciona para a página de login após logout
-  };
-
-  const [postContent, setPostContent] = useState("");
-  const [posts, setPosts] = useState([]);
-
-  const handlePostSubmit = () => {
-    // Lógica para enviar a postagem
-    const newPost = {
-      author: "Seu Apelido",
-      content: postContent,
-      likes: 0,
-      dislikes: 0,
-      comments: [],
-    };
-
-    setPosts((prevPosts) => [...prevPosts, newPost]);
-    setPostContent("");
-  };
+    localStorage.removeItem("token")
+    return window.alert("Você saiu :'(")
+  }
 
   const renderPosts = () => {
-    // Função para renderizar as postagens
-    return posts.map((post, index) => (
-      <Post key={index}>
-        <p className="author">Enviado por: {post.author}</p>
-        <p className="content">{post.content}</p>
-        <div className="actions">
-          <button>Like</button>
-          <button>Dislike</button>
-          <button>Inserir Comentário</button>
-        </div>
-      </Post>
-    ));
-  };
-  
+    return (
+      <>
+        {isLoading ? (
+          <p>Carregando posts...</p>
+        ) : (
+          posts.map((post) => (
+            <div key={post.id}>
+              <h3>{post.title}</h3>
+              <p>{post.body}</p>
+              <button onClick={() => likeDislikePost(post.id, true)}>Like</button>
+              <button onClick={() => likeDislikePost(post.id, false)}>Dislike</button>
+            </div>
+          ))
+        )}
+      </>
+    )
+  }
+
   return (
     <>
       <Header>
@@ -141,19 +186,20 @@ const HomePage = () => {
         <PostForm>
           <PostInput
             placeholder="Escreva sua postagem..."
-            value={postContent}
-            onChange={(event) => setPostContent(event.target.value)}
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
           />
-          <PostButton onClick={handlePostSubmit}>Postar</PostButton>
+          <PostButton onClick={createNewPost}>Postar</PostButton>
         </PostForm>
-  
+
         <PostSeparator />
-  
+
         <PostContainer>
           {renderPosts()}
         </PostContainer>
       </Main>
     </>
-  );
+  )
 }
+
 export default HomePage
