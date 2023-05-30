@@ -45,14 +45,6 @@ const Phrase = styled.p`
   }
 `;
 
-// const Input = styled.input`
-//   width: 300px;
-//   height: 40px;
-//   margin-top: 20px;
-//   padding: 10px;
-//   border-radius: 4px;
-//   border: 1px solid #ccc;
-// `;
 const Heading = styled.h1`
   font-size: 24px;
   margin-bottom: 20px;
@@ -146,7 +138,6 @@ const LoginPage = () => {
         localStorage.setItem("token", token)
         setIsLoading(false)
         goToHomePage(navigate)
-        // navigate(goToHomePage)
       } else {
         console.log(response)
         setIsLoading(false)
@@ -170,7 +161,6 @@ const LoginPage = () => {
 
         <Form onSubmit={login} autoComplete="off">
           <FormGroup>
-            {/* <label>Email</label> */}
             <input
               placeholder="Email"
               name="email"
@@ -180,7 +170,6 @@ const LoginPage = () => {
           </FormGroup>
 
           <FormGroup>
-            {/* <label>Senha</label> */}
             <input
               placeholder="Password"
               type={showPassword ? "text" : "password"}

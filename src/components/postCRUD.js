@@ -1,8 +1,6 @@
 import axios from "axios"
 import { BASE_URL } from "../constants/url"
 
-
-
 const getPosts = async (headers) => {
   const response = await axios
     .get(`${BASE_URL}/posts`, headers)

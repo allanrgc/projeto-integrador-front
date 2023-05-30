@@ -1,7 +1,6 @@
 import { useState, useEffect  } from "react"
 import styled from "styled-components"
 import { useNavigate } from "react-router-dom"
-import { goToLoginPage } from "../../routes/coordinator"
 import labeLogoMini from "../../assets/labeLogoMini.png"
 import postCRUD from "../../components/postCRUD"
 
@@ -89,10 +88,6 @@ const Post = styled.div`
     margin-right: 10px;
   }
 `;
-
-
-
-
 
 
 const HomePage = () => {
